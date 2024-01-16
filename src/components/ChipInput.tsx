@@ -1,38 +1,50 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import Chip from "./Chip";
 import { itemsArray } from "../data";
 
-const ChipInput = () => {
-  const [inputValue, setInputValue] = useState("");
-  const [selectedChips, setSelectedChips] = useState([]);
-  const [isClicked, setIsClicked] = useState(false);
-  const [allItems, setAllItems] = useState(itemsArray);
-  const [chipsWidth, setChipsWidth] = useState(0);
+interface Item {
+  avatar: string;
+  name: string;
+  email: string;
+}
 
-  const inputRef = useRef(null);
-  const measureRef = useRef(null);
-  const itemsRef = useRef(null);
+const ChipInput: React.FC = () => {
+  const [inputValue, setInputValue] = useState<string>("");
+  const [selectedChips, setSelectedChips] = useState<Item[]>([]);
+  const [isClicked, setIsClicked] = useState<boolean>(false);
+  const [allItems, setAllItems] = useState<Item[]>(itemsArray);
+  const [chipsWidth, setChipsWidth] = useState<number>(0);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const measureRef = useRef<HTMLDivElement>(null);
+  const itemsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setChipsWidth(measureRef.current.offsetWidth);
+    if (measureRef.current) {
+      setChipsWidth(measureRef.current.offsetWidth);
+    }
   }, [selectedChips]);
 
-  useEffect(() => {
-    inputRef.current.style.paddingLeft = `${chipsWidth + 13}px`;
-    itemsRef.current.style.left = `${chipsWidth + 13}px`;
+useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.paddingLeft = `${chipsWidth + 13}px`;
+    }
+    if (itemsRef.current) {
+      itemsRef.current.style.left = `${chipsWidth + 13}px`;
+    }
   }, [chipsWidth]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
-  const handleChipClick = (item) => {
+  const handleChipClick = (item: Item) => {
     setSelectedChips((chips) => [...chips, item]);
     setAllItems((items) => items.filter((i) => i.name !== item.name));
     setInputValue("");
   };
 
-  const handleChipRemove = (removedItem) => {
+  const handleChipRemove = (removedItem: Item) => {
     setSelectedChips((chips) => chips.filter((item) => item !== removedItem));
     setAllItems((items) => [...items, removedItem]);
   };
@@ -60,7 +72,7 @@ const ChipInput = () => {
           <div className="absolute -top-2 flex flex-wrap" ref={measureRef}>
             {selectedChips.map((chip) => (
               <Chip
-                key={chip}
+                key={chip.email}
                 chip={chip}
                 onRemove={() => handleChipRemove(chip)}
               />

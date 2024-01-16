@@ -1,6 +1,15 @@
 import React from "react";
 
-const Chip = ({ chip, onRemove }) => {
+interface ChipProps {
+  chip: {
+    avatar: string;
+    name: string;
+    email: string;
+  },
+  onRemove: () => void;
+}
+
+const Chip: React.FC<ChipProps> = ({ chip, onRemove }) => {
   return (
     <div className="flex items-center bg-gray-400 text-black h-8 rounded-3xl p-2 m-1 mb-6">
       <img
